@@ -1,83 +1,95 @@
 let score = document.createElement('div');
 let playerScore = 0;
+let playerScoreText = document.getElementById('playerScoreText');
+playerScoreText.innerText = playerScore;
 let computerScore = 0;
+let computerScoreText = document.getElementById('computerScoreText');
+computerScoreText.innerText = computerScore;
 let ties = 0;
-let resultText = ' ';
-score.innerHTML = "<p>Player Score: " + playerScore + "</p>" +
-                  "<p>Computer Score: " + computerScore + "</p>" +
-                  "<p>Ties: " + ties + "</p>" +
-                  "<p><b>" + resultText + "</b></p>";
-document.body.appendChild(score);
+let tiesText = document.getElementById('tiesText');
+tiesText.innerText = ties;
+let roundResultText = document.getElementById('result');
+roundResultText.innerHTML = '';
+let gameResultText = document.getElementById('gameResult');
+gameResultText.innerHTML = '';
 
 let getComputerChoice = array => array[Math.floor(Math.random() * array.length)];
 
-const options = ['Rock', 'Paper', 'Scissors'];
-options.forEach((choice) => {
-    let b = document.createElement('button');
-    b.textContent = `${choice}`;
-    b.addEventListener('click', function() {
-        let computerSelection = getComputerChoice(options);
-        let result = document.createElement('div');
-        result.innerText = playRound(choice, computerSelection);
-        result.className = 'result';
-        if (playerScore + computerScore + ties < 5) {
-            document.body.appendChild(result);
-            if (result.textContent.includes('win')) {
-                playerScore++;
-            } else if (result.textContent.includes('lose')) {
-                computerScore++;
-            } else {
-                ties++;
-            }
-        }
-        
-        if (playerScore + computerScore + ties === 5) {
-            if (playerScore > computerScore) {
-                resultText = `You win! You beat the computer ${playerScore} to ${computerScore} with ${ties} tie(s).`;
-            } else if (computerScore > playerScore) {
-                resultText = `You lose! The computer beat you ${computerScore} to ${playerScore} with ${ties} tie(s).`;
-            } else {
-                resultText = `Tie! You both won ${playerScore} rounds each and had ${ties} tie(s).`;
-            }
-        }
-
-        score.innerHTML = "<p>Player Score: " + playerScore + "</p>" +
-                          "<p>Computer Score: " + computerScore + "</p>" +
-                          "<p>Ties: " + ties + "</p>" +
-                          "<p><b>" + resultText + "</b></p>";
-    });
-    document.body.appendChild(b);
+let rock = document.getElementById('rock');
+rock.addEventListener('click', function() {
+    getWeapon('Rock')
+})
+let paper = document.getElementById('paper');
+paper.addEventListener('click', function() {
+    getWeapon('Paper')
+})
+let scissors = document.getElementById('scissors');
+scissors.addEventListener('click', function() {
+    getWeapon('Scissors')
 })
 
+const options = ['Rock', 'Paper', 'Scissors'];
+
+function getWeapon(choice) {
+    console.log(choice);
+    let playerSelection = choice;
+    let computerSelection = getComputerChoice(options);
+    if (playerScore + computerScore + ties < 5) {
+        roundResultText.innerHTML += "<p>" + playRound(playerSelection, computerSelection) + "</p>";
+    }
+    
+    if (playerScore + computerScore + ties === 5) {
+        if (playerScore > computerScore) {
+            gameResultText.innerHTML = `You win! You beat the computer ${playerScore} to ${computerScore} with ${ties} tie(s).`;
+        } else if (computerScore > playerScore) {
+            gameResultText.innerHTML = `You lose! The computer beat you ${computerScore} to ${playerScore} with ${ties} tie(s).`;
+        } else {
+            gameResultText.innerHTML = `Tie! You both won ${playerScore} rounds each and had ${ties} tie(s).`;
+        }
+    }
+    
+    playerScoreText.innerText = playerScore;
+    computerScoreText.innerText = computerScore;
+    tiesText.innerText = ties;
+
+    score.innerHTML = "<p><b>" + gameResultText + "</b></p>";
+}
+
 function playRound(playerSelection, computerSelection) {
+    let round = playerScore + computerScore + ties + 1;
     if (playerSelection === 'Rock' && computerSelection === 'Scissors') {
-        return(`You win! Rock beats Scissors!`);
+        playerScore++;
+        return(`Round ${round}: Win. Rock beats Scissors.`);
     } else if (playerSelection === 'Rock' && computerSelection === 'Paper') {
-        return(`You lose! Paper beats Rock!`);
+        computerScore++;
+        return(`Round ${round}: Loss. Paper beats Rock.`);
     } else if (playerSelection === 'Paper' && computerSelection === 'Scissors') {
-        return(`You lose! Scissors beats Paper!`);
+        computerScore++;
+        return(`Round ${round}: Loss. Scissors beats Paper.`);
     } else if (playerSelection === 'Paper' && computerSelection === 'Rock') {
-        return(`You win! Paper beats Rock!`);
+        playerScore++;
+        return(`Round ${round}: Win. Paper beats Rock.`);
     } else if (playerSelection === 'Scissors' && computerSelection === 'Rock') {
-        return(`You lose! Rock beats Scissors!`);
+        computerScore++;
+        return(`Round ${round}: Loss. Rock beats Scissors.`);
     } else if (playerSelection === 'Scissors' && computerSelection === 'Paper') {
-        return(`You win! Scissors beats Paper!`);
+        playerScore++
+        return(`Round ${round}: Win. Scissors beats Paper.`);
     } else {
-        return(`Tie! Both players selected ${computerSelection}`);
+        ties++;
+        return(`Round ${round}: Tie. Both players selected ${computerSelection}`);
     }
 }
 
-let reset = document.createElement('button');
-reset.textContent = 'Reset'
+let reset = document.getElementById('reset');
 reset.addEventListener('click', function (){
     playerScore = 0;
     computerScore = 0;
     ties = 0;
-    resultText = ' ';
-    score.innerHTML = "<p>Player Score: " + playerScore + "</p>" +
-                      "<p>Computer Score: " + computerScore + "</p>" +
-                      "<p>Ties: " + ties + "</p>" +
-                      "<p><b>" + resultText + "</b></p>";
+    roundResultText.innerHTML = '';
+    playerScoreText.innerText = playerScore;
+    computerScoreText.innerText = computerScore;
+    tiesText.innerText = ties;
+    gameResultText.innerHTML = '';
     document.querySelectorAll('.result').forEach(el => el.remove());
 })
-document.body.appendChild(reset);
